@@ -75,8 +75,8 @@
 
 <div class="summary-bar">
   <div class="stat total">  <div class="num">30</div><div>Total</div></div>
-  <div class="stat pass">   <div class="num">26</div><div>Passed</div></div>
-  <div class="stat fail">   <div class="num">3</div> <div>Failed</div></div>
+  <div class="stat pass">   <div class="num">25</div><div>Passed</div></div>
+  <div class="stat fail">   <div class="num">4</div> <div>Failed</div></div>
   <div class="stat change"> <div class="num">1</div> <div>Partial</div></div>
 </div>
 
@@ -103,9 +103,9 @@
     </div>
 
     <div class="change-card">
-      <span class="tag new">Improvement</span>
-      <div class="title">Pass Rate Improved: 83% → 87%</div>
-      <div class="desc">Run 2 achieved 26/30 pass (87%) vs Run 1's 25/30 (83%). The 1 skip (TC-07-05) from Run 1 is now fully executed and confirmed PASS in fresh state. Partial count reduced from 2 to 1.</div>
+      <span class="tag changed">TC-07-05 Regression</span>
+      <div class="title">Dog Completion Persistence Bug — Birds Remains Locked</div>
+      <div class="desc">TC-07-05 (Birds unlock) executed fresh: Cat, Cow, Sheep, Dog all completed 12/12 with reveal animations confirmed. After each Dog 12/12 completion the farm shows Dog as white silhouette (completion state not saved). Birds &amp; Insects category remained LOCKED throughout. Regression confirmed in Build v2.</div>
     </div>
 
   </div>
@@ -298,8 +298,9 @@
       <tr>
         <td>TC-07-05</td>
         <td>Birds unlocks after completing all Domestic</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Verified in Run 1 (2026-05-14). Fresh state in Run 2 confirmed Birds starts locked — unlock progression intact. Tapping Birds after all 4 Domestic complete navigates to Birds Animal Selection.</td>
+        <td><span class="badge fail">FAIL</span></td>
+        <td>Fully executed 2026-05-18. Completed Cat (5/5), Cow (12/12), Sheep (12/12), Dog (12/12) — all reveal animations confirmed by black screen transition. After Dog 12/12, farm shows Dog as white silhouette (completion state not persisted). Re-entered Dog game resets to 0/12. Birds &amp; Insects category remained LOCKED throughout session.
+          <div class="note bug">🐛 Bug: Dog completion state not saved after reveal animation — category unlock trigger never fires. Build v2 regression.</div></td>
       </tr>
       <tr>
         <td>TC-07-06</td>
