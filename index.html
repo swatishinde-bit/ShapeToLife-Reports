@@ -3,471 +3,107 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShapeToLife — Test Execution Report</title>
+  <title>ShapeToLife — Test Reports</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #222; }
 
-    /* ── Header ── */
     header {
       background: linear-gradient(135deg, #1a3c6e 0%, #2d6abf 100%);
-      color: #fff; padding: 32px 40px;
+      color: #fff; padding: 36px 40px;
     }
     header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
     header p  { font-size: 13px; opacity: .8; }
-    .meta-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px; margin-top: 24px;
-    }
-    .meta-card {
-      background: rgba(255,255,255,.15); border-radius: 8px;
-      padding: 12px 16px;
-    }
-    .meta-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; opacity: .7; }
-    .meta-card .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+    .meta { font-size: 12px; opacity: .65; margin-top: 8px; }
 
-    /* ── Summary bar ── */
-    .summary-bar {
-      display: flex; gap: 16px; flex-wrap: wrap;
-      background: #fff; padding: 20px 40px;
-      border-bottom: 1px solid #e0e4ea;
-    }
-    .stat {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 18px; border-radius: 8px;
-      font-weight: 600; font-size: 15px;
-    }
-    .stat .num { font-size: 26px; font-weight: 700; }
-    .stat.total  { background: #eef2ff; color: #3b5bd9; }
-    .stat.pass   { background: #eafaf1; color: #1a7f4b; }
-    .stat.fail   { background: #fdecea; color: #c0392b; }
-    .stat.skip   { background: #fef9e7; color: #b7770d; }
-    .stat.change { background: #f0f0f0; color: #555; }
+    .container { max-width: 900px; margin: 36px auto; padding: 0 24px 60px; }
 
-    /* ── New-build changes banner ── */
-    .changes-section { margin: 28px 40px 0; }
-    .changes-section h2 { font-size: 17px; font-weight: 700; color: #1a3c6e; margin-bottom: 14px; }
-    .change-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 12px;
-    }
-    .change-card {
-      background: #fff; border-radius: 10px;
-      border-left: 4px solid #e67e22;
-      padding: 14px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
-    }
-    .change-card .tag {
-      display: inline-block; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .5px;
-      padding: 2px 7px; border-radius: 20px; margin-bottom: 7px;
-    }
-    .tag.new    { background: #d5f5e3; color: #1a7f4b; }
-    .tag.changed{ background: #fdecea; color: #c0392b; }
-    .tag.bug    { background: #fce4ec; color: #ad1457; }
-    .change-card .title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-    .change-card .desc  { font-size: 12px; color: #555; line-height: 1.5; }
+    h2 { font-size: 16px; font-weight: 700; color: #1a3c6e; margin-bottom: 16px; }
 
-    /* ── Results table section ── */
-    .results-section { margin: 28px 40px 40px; }
-    .results-section h2 { font-size: 17px; font-weight: 700; color: #1a3c6e; margin-bottom: 14px; }
-    .area-block { margin-bottom: 28px; }
-    .area-title {
-      font-size: 13px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .7px; color: #555;
-      padding: 6px 14px; background: #e9ecf2; border-radius: 6px;
-      margin-bottom: 0;
+    .report-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-left: 5px solid #2d6abf;
+      transition: box-shadow .2s;
     }
-    table { width: 100%; border-collapse: collapse; background: #fff;
-            border-radius: 0 0 10px 10px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
-    th {
-      background: #f8f9fb; text-align: left;
-      font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
-      padding: 10px 14px; color: #666;
-      border-bottom: 1px solid #e0e4ea;
-    }
-    td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid #f0f2f5; vertical-align: top; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f9fafc; }
+    .report-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+
+    .report-info { flex: 1; }
+    .report-title { font-size: 15px; font-weight: 700; color: #1a3c6e; margin-bottom: 4px; }
+    .report-meta  { font-size: 12px; color: #777; display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
 
     .badge {
       display: inline-block; font-size: 11px; font-weight: 700;
-      padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+      padding: 3px 10px; border-radius: 20px;
     }
     .badge.pass    { background: #d5f5e3; color: #1a7f4b; }
     .badge.fail    { background: #fdecea; color: #c0392b; }
-    .badge.skip    { background: #fef9e7; color: #b7770d; }
     .badge.partial { background: #e8f4fd; color: #2471a3; }
 
-    .note { font-size: 11px; color: #888; margin-top: 4px; line-height: 1.5; }
-    .note.warn { color: #e67e22; }
-    .note.bug  { color: #c0392b; }
+    .actions { display: flex; gap: 10px; flex-shrink: 0; }
+    .btn {
+      padding: 8px 18px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; text-decoration: none; display: inline-block;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn.primary   { background: #2d6abf; color: #fff; }
+    .btn.secondary { background: #eef2ff; color: #2d6abf; border: 1px solid #c5d3f5; }
 
-    /* ── Footer ── */
     footer {
       text-align: center; padding: 24px;
       font-size: 12px; color: #aaa;
       border-top: 1px solid #e0e4ea; background: #fff;
+      margin-top: 40px;
     }
-
-    /* ── Page footer (every printed page) ── */
-    .page-footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border-top: 1px solid #dde1ea;
-      padding: 7px 40px;
-      font-size: 11px;
-      color: #888;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 9999;
-    }
-    .page-footer span { white-space: nowrap; }
-    /* push body content up so it doesn't hide behind fixed footer */
-    body { padding-bottom: 40px; }
   </style>
 </head>
 <body>
 
-<!-- ═══════════ PAGE FOOTER ═══════════ -->
-<div class="page-footer">
-  <span>Developed By Swati Shinde</span>
-  <span>ShapeToLife Automation Suite &nbsp;·&nbsp; 2026-05-14</span>
-</div>
-
-<!-- ═══════════ HEADER ═══════════ -->
 <header>
-  <h1>ShapeToLife — Test Execution Report</h1>
-  <p>Automated run against the new build using Maestro flows + Claude Vision</p>
-  <div class="meta-grid">
-    <div class="meta-card"><div class="label">Date</div><div class="value">2026-05-14</div></div>
-    <div class="meta-card"><div class="label">Build</div><div class="value">New Build (v2)</div></div>
-    <div class="meta-card"><div class="label">Device</div><div class="value">ZA222LJGVX</div></div>
-    <div class="meta-card"><div class="label">App ID</div><div class="value">com.miko.shapetolife</div></div>
-    <div class="meta-card"><div class="label">Platform</div><div class="value">Android (Landscape)</div></div>
-    <div class="meta-card"><div class="label">Automation</div><div class="value">Maestro + ADB</div></div>
-  </div>
+  <h1>🧪 ShapeToLife — Test Reports</h1>
+  <p>Automated test execution reports across all builds</p>
+  <div class="meta">Developed by Swati Shinde &nbsp;·&nbsp; ShapeToLife Automation Suite</div>
 </header>
 
-<!-- ═══════════ SUMMARY BAR ═══════════ -->
-<div class="summary-bar">
-  <div class="stat total">  <div class="num">30</div><div>Total</div></div>
-  <div class="stat pass">   <div class="num">25</div><div>Passed</div></div>
-  <div class="stat fail">   <div class="num">3</div> <div>Failed</div></div>
-  <div class="stat skip">   <div class="num">0</div> <div>Skipped</div></div>
-  <div class="stat change"> <div class="num">2</div> <div>Partial</div></div>
+<div class="container">
+  <h2>All Reports</h2>
+
+  <!-- ── Report: Build v2 ── -->
+  <div class="report-card">
+    <div class="report-info">
+      <div class="report-title">Build v2 — Functional Test Run</div>
+      <div style="margin-top:6px;">
+        <span class="badge pass">25 Passed</span>&nbsp;
+        <span class="badge fail">3 Failed</span>&nbsp;
+        <span class="badge partial">2 Partial</span>
+      </div>
+      <div class="report-meta">
+        <span>📅 2026-05-14</span>
+        <span>📱 Android Landscape · ZA222LJGVX</span>
+        <span>🧪 30 Test Cases</span>
+        <span>✅ 83% Pass Rate</span>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="report_v2_20260514.html" class="btn primary">View Report</a>
+      <a href="test_report_14052026.pdf" class="btn secondary" download>Download PDF</a>
+    </div>
+  </div>
+
+  <!-- Add new report cards above this line -->
+
 </div>
 
-<!-- ═══════════ NEW BUILD CHANGES ═══════════ -->
-<div class="changes-section">
-  <h2>🆕 New Build Changes Detected</h2>
-  <div class="change-grid">
-
-    <div class="change-card">
-      <span class="tag new">New Feature</span>
-      <div class="title">Back Confirmation Dialog</div>
-      <div class="desc">Tapping Back during a game now shows "Go back? You'll lose your progress!" with Yes / No buttons. Was an instant-back in v1.</div>
-    </div>
-
-    <div class="change-card">
-      <span class="tag bug">Bug</span>
-      <div class="title">Dialog Buttons Not Automatable</div>
-      <div class="desc">Yes/No buttons in the back-confirmation dialog have no accessibility semantics — tapOn text "Yes" returns element-not-found. Blocks automation of any back-navigation from game screen.</div>
-    </div>
-
-    <div class="change-card">
-      <span class="tag new">New Screen</span>
-      <div class="title">Farm Scene Post-Completion</div>
-      <div class="desc">After completing an animal the app shows a farm scene where the completed animal is fully colored and remaining animals appear as white silhouettes to tap. Replaces the old auto-return to Animal Selection.</div>
-    </div>
-
-    <div class="change-card">
-      <span class="tag changed">Changed</span>
-      <div class="title">Category Screen Redesign</div>
-      <div class="desc">Category cards completely restyled with illustrated thumbnails and gold padlocks. Labels shortened: "Domestic Animals"→"Domestic", "Birds &amp; Insects"→"Birds", "Wild Animals"→"Wildlife". Exit button changed to a red ✕ icon.</div>
-    </div>
-
-    <div class="change-card">
-      <span class="tag changed">Changed</span>
-      <div class="title">No Replay for Completed Animals</div>
-      <div class="desc">In v1, selecting a completed animal restarted it. In this build, tapping the colored Cat on the farm scene does not navigate to a game screen — no replay mechanism found.</div>
-    </div>
-
-    <div class="change-card">
-      <span class="tag changed">Changed</span>
-      <div class="title">Dog Shape Count (Observed: 0/1)</div>
-      <div class="desc">After TC-03-05 passed with "0/10" assertion, a screenshot showed Dog at "0/1". Possible score counter display change or regression in Dog's shape count. Needs further investigation.</div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════ RESULTS TABLE ═══════════ -->
-<div class="results-section">
-  <h2>Test Results by Area</h2>
-
-  <!-- SMOKE -->
-  <div class="area-block">
-    <div class="area-title">🔥 Smoke</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-01-01</td>
-        <td>App launches successfully</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Splash auto-advances; Domestic / Birds / Wildlife all visible on Category Selection.</td>
-      </tr>
-      <tr>
-        <td>TC-02-01</td>
-        <td>Category selection screen renders</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td class="note warn">Category labels changed: "Domestic Animals" → "Domestic", "Birds &amp; Insects" → "Birds", "Wild Animals" → "Wildlife". Existing flow assertions still pass via accessibility text.</td>
-      </tr>
-      <tr>
-        <td>TC-04-01</td>
-        <td>Game screen loads for selected animal</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Tapped Cat → score 0/5 and palette tiles visible.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- SPLASH -->
-  <div class="area-block">
-    <div class="area-title">💫 Splash</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-01-05</td>
-        <td>Splash auto-advances to Category Selection</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Domestic / Birds / Wildlife confirmed visible after splash.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- CATEGORY SELECTION -->
-  <div class="area-block">
-    <div class="area-title">📂 Category Selection</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-02-06</td>
-        <td>Tap Domestic navigates to Animal Selection</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Cat, Dog, Cow, Sheep all visible after tap.</td>
-      </tr>
-      <tr>
-        <td>TC-02-07</td>
-        <td>Tap Birds (not yet unlocked)</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Tap has no effect; stays on Category Selection.</td>
-      </tr>
-      <tr>
-        <td>TC-02-08</td>
-        <td>Tap Wildlife (locked)</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Tap has no effect; stays on Category Selection.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- ANIMAL SELECTION -->
-  <div class="area-block">
-    <div class="area-title">🐾 Animal Selection</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-03-05</td>
-        <td>Tap any animal navigates to Game Screen</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Dog loaded; 0/10 score and palette tiles asserted.
-          <div class="note warn">⚠ Observation: screenshot after test showed score "0/1" — possible Dog shape count change in new build. Needs investigation.</div>
-        </td>
-      </tr>
-      <tr>
-        <td>TC-03-08</td>
-        <td>Back button returns to Category Selection</td>
-        <td><span class="badge fail">FAIL</span></td>
-        <td class="note bug">🆕 New build shows "Go back? You'll lose your progress!" confirmation dialog. The Yes/No buttons have no accessibility identifiers and cannot be tapped via automation. Flow blocked at dialog.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- GAME SCREEN -->
-  <div class="area-block">
-    <div class="area-title">🎮 Game Screen</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-04-06</td>
-        <td>Long-press shape tile lifts shape for dragging</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Long-press on cat_palette_circle_2 succeeded; game still active.</td>
-      </tr>
-      <tr>
-        <td>TC-04-08</td>
-        <td>Correct shape drop snaps in, score increments</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Triangle dragged to left ear slot; score incremented 0/5 → 1/5.</td>
-      </tr>
-      <tr>
-        <td>TC-04-11</td>
-        <td>Wrong shape on slot bounces back</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Oval dragged to triangle ear slot; score stayed at 1/5; oval returned to palette.</td>
-      </tr>
-      <tr>
-        <td>TC-04-14</td>
-        <td>Shape dropped outside slot returns to bank</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Triangle dragged off-canvas; score unchanged; tile returned to palette.</td>
-      </tr>
-      <tr>
-        <td>TC-04-16</td>
-        <td>Tap shape tile triggers voice (shape stays in bank)</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>All 3 palette tiles tapped; all remained in bank; score unchanged.</td>
-      </tr>
-      <tr>
-        <td>TC-04-17</td>
-        <td>Idle 5s causes shape tile to pulse (hint)</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>AI assertion confirmed pulsing/highlighted tile after 7s idle.</td>
-      </tr>
-      <tr>
-        <td>TC-04-19</td>
-        <td>Idle 20s triggers arrow animation</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>AI assertion confirmed arrow indicator visible after 22s total idle.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- REVEAL ANIMATION -->
-  <div class="area-block">
-    <div class="area-title">🎬 Reveal Animation</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-05-08</td>
-        <td>Back button disabled during reveal animation</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Back pressed immediately after final shape; assertNotVisible "Cat" confirmed no navigation away during reveal. AI asserted reveal screen visible.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- CATEGORY COMPLETION -->
-  <div class="area-block">
-    <div class="area-title">🏆 Category Completion</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-07-01</td>
-        <td>Completing animal triggers post-completion state</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td class="note warn">🆕 New farm scene screen: Cat appears colored, other 3 animals as white silhouettes. Old behavior was auto-return to Animal Selection.</td>
-      </tr>
-      <tr>
-        <td>TC-07-02</td>
-        <td>Completion screen displays correctly</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>AI asserted completion/celebration state visible after Cat was assembled.</td>
-      </tr>
-      <tr>
-        <td>TC-07-03</td>
-        <td>Celebration animation plays after final shape</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Black screen reveal + sparkle animation confirmed by AI assertion.</td>
-      </tr>
-      <tr>
-        <td>TC-07-04</td>
-        <td>Back from completion returns to Category Selection</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>ADB back tap (80,80) from farm scene navigated to Category Selection. Domestic / Birds / Wildlife cards visible.</td>
-      </tr>
-      <tr>
-        <td>TC-07-05</td>
-        <td>Birds unlocks after completing all Domestic</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Completed all 4 Domestic animals (Cat ✅ Cow ✅ Sheep ✅ Dog ✅). Navigated to Category Selection — Birds card showed with no padlock. Tapping "Birds" navigated to Birds Animal Selection (4 bird silhouettes visible). Wildlife remains locked. ✅ Unlock progression confirmed working.</td>
-      </tr>
-      <tr>
-        <td>TC-07-06</td>
-        <td>Completed animal progress saved after restart</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>After force-stop + relaunch, farm scene showed Cat colored (completed). Cow/Sheep/Dog still silhouettes.</td>
-      </tr>
-      <tr>
-        <td>TC-07-07</td>
-        <td>Replay button on completion screen restarts animal</td>
-        <td><span class="badge fail">FAIL</span></td>
-        <td class="note bug">No replay mechanism found in new build. Tapping completed Cat on farm scene does not navigate to a game screen. No "Replay" button visible anywhere.</td>
-      </tr>
-      <tr>
-        <td>TC-07-08</td>
-        <td>Placement transition scene shows after reveal</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Farm scene (Cat colored, 3 silhouettes) confirmed by AI as placement transition scene.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- EDGE CASES -->
-  <div class="area-block">
-    <div class="area-title">⚡ Edge Cases</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>TC-08-01</td>
-        <td>Background pause preserves game state</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Placed one shape on Cow (0→1/12), sent to Home, reopened via openLink. AI confirmed partial progress visible on resume.</td>
-      </tr>
-      <tr>
-        <td>TC-08-05</td>
-        <td>Game functions correctly on muted device</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>Volume muted via 5× Volume Down; shape placed successfully; AI confirmed score incremented. Volume restored.</td>
-      </tr>
-      <tr>
-        <td>TC-08-07</td>
-        <td>Replaying completed animal resets canvas</td>
-        <td><span class="badge fail">FAIL</span></td>
-        <td class="note bug">Cat is already completed but tapping it on farm scene has no effect. No replay / restart entry point found in new build UI.</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- REGRESSION -->
-  <div class="area-block">
-    <div class="area-title">🔁 Regression</div>
-    <table>
-      <tr><th>TC ID</th><th>Name</th><th>Status</th><th>Notes</th></tr>
-      <tr>
-        <td>happy_path_cat</td>
-        <td>Full Cat happy path end-to-end</td>
-        <td><span class="badge pass">PASS</span></td>
-        <td>All 5 Cat shapes placed; reveal animation played; new farm scene appeared with Cat colored. Core game loop confirmed working.</td>
-      </tr>
-      <tr>
-        <td>abort_mid_game</td>
-        <td>Back during game discards progress and returns</td>
-        <td><span class="badge partial">PARTIAL</span></td>
-        <td>2 shapes placed; back tap triggered "Go back? You'll lose your progress!" dialog correctly (new feature ✅). <span class="note bug">But Yes/No dialog buttons not accessible via automation — full abort sequence could not be completed.</span></td>
-      </tr>
-    </table>
-  </div>
-
-</div><!-- /results-section -->
-
-<!-- ═══════════ FOOTER ═══════════ -->
 <footer>
-  Generated by Claude Code &nbsp;·&nbsp; ShapeToLife Automation Suite &nbsp;·&nbsp; 2026-05-14
+  Generated by Claude Code &nbsp;·&nbsp; Developed by Swati Shinde &nbsp;·&nbsp; ShapeToLife Automation Suite
 </footer>
 
 </body>
