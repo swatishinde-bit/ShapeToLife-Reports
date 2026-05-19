@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShapeToLife — Miko 3 Smoke Test Report 2026-05-19</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #222; padding-bottom: 40px; }
+    header { background: linear-gradient(135deg, #1a3c6e 0%, #2d6abf 100%); color: #fff; padding: 32px 40px; }
+    header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    header p  { font-size: 13px; opacity: .8; }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 24px; }
+    .meta-card { background: rgba(255,255,255,.15); border-radius: 8px; padding: 12px 16px; }
+    .meta-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; opacity: .7; }
+    .meta-card .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+    .summary-bar { display: flex; gap: 16px; flex-wrap: wrap; background: #fff; padding: 20px 40px; border-bottom: 1px solid #e0e4ea; }
+    .stat { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 15px; }
+    .stat .num { font-size: 26px; font-weight: 700; }
+    .stat.total  { background: #eef2ff; color: #3b5bd9; }
+    .stat.pass   { background: #eafaf1; color: #1a7f4b; }
+    .stat.fail   { background: #fdecea; color: #c0392b; }
+    .stat.info   { background: #fff8e1; color: #b8860b; }
+    .changes-section { margin: 28px 40px 0; }
+    .changes-section h2 { font-size: 17px; font-weight: 700; color: #1a3c6e; margin-bottom: 14px; }
+    .change-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    .change-card { background: #fff; border-radius: 10px; border-left: 4px solid #e67e22; padding: 14px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+    .change-card.blue { border-left-color: #2d6abf; }
+    .change-card.red  { border-left-color: #c0392b; }
+    .change-card .tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: 2px 7px; border-radius: 20px; margin-bottom: 7px; }
+    .tag.info    { background: #e8f4fd; color: #2471a3; }
+    .tag.bug     { background: #fce4ec; color: #ad1457; }
+    .tag.warn    { background: #fff3e0; color: #e65100; }
+    .change-card .title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .change-card .desc  { font-size: 12px; color: #555; line-height: 1.5; }
+    .results-section { margin: 28px 40px 40px; }
+    .results-section h2 { font-size: 17px; font-weight: 700; color: #1a3c6e; margin-bottom: 14px; }
+    .area-block { margin-bottom: 28px; }
+    .area-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: #555; padding: 6px 14px; background: #e9ecf2; border-radius: 6px; margin-bottom: 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 0 0 10px 10px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+    th { background: #f8f9fb; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; color: #666; border-bottom: 1px solid #e0e4ea; }
+    td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid #f0f2f5; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9fafc; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+    .badge.pass { background: #d5f5e3; color: #1a7f4b; }
+    .badge.fail { background: #fdecea; color: #c0392b; }
+    .note { font-size: 11px; color: #888; margin-top: 4px; line-height: 1.5; }
+    .note.bug  { color: #c0392b; }
+    .note.warn { color: #e67e22; }
+    .device-diff { background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 14px 18px; margin: 20px 40px 0; font-size: 13px; line-height: 1.7; }
+    .device-diff strong { color: #b8860b; }
+    .page-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #dde1ea; padding: 7px 40px; font-size: 11px; color: #888; display: flex; justify-content: space-between; align-items: center; z-index: 9999; }
+    footer { text-align: center; padding: 24px; font-size: 12px; color: #aaa; border-top: 1px solid #e0e4ea; background: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="page-footer">
+  <span>Developed By Swati Shinde</span>
+  <span>ShapeToLife Automation Suite &nbsp;·&nbsp; 2026-05-19</span>
+</div>
+
+<header>
+  <h1>🧪 ShapeToLife — Miko 3 Smoke Test Report</h1>
+  <p>First smoke run on production Miko 3 robot device (WiFi ADB)</p>
+  <div class="meta-grid">
+    <div class="meta-card"><div class="label">Date</div><div class="value">2026-05-19</div></div>
+    <div class="meta-card"><div class="label">Device</div><div class="value">Miko 3 Bot</div></div>
+    <div class="meta-card"><div class="label">Model</div><div class="value">MIKO3 (t6736_p4mme_64)</div></div>
+    <div class="meta-card"><div class="label">Connection</div><div class="value">WiFi ADB · 10.52.69.68:5555</div></div>
+    <div class="meta-card"><div class="label">Resolution</div><div class="value">1280 × 720 · Landscape</div></div>
+    <div class="meta-card"><div class="label">Package</div><div class="value">com.miko.shapetolife</div></div>
+    <div class="meta-card"><div class="label">Run Type</div><div class="value">Smoke — 5 TCs</div></div>
+    <div class="meta-card"><div class="label">Pass Rate</div><div class="value">80%</div></div>
+  </div>
+</header>
+
+<div class="summary-bar">
+  <div class="stat total"><div class="num">5</div> Total</div>
+  <div class="stat pass"><div class="num">4</div> Passed</div>
+  <div class="stat fail"><div class="num">1</div> Failed</div>
+  <div class="stat info"><div class="num">2</div> Device Differences Found</div>
+</div>
+
+<div class="device-diff">
+  <strong>⚠️ Miko 3 Device Differences vs Test Device (ZA222LJGVX)</strong><br>
+  1. <strong>launchApp command hangs over WiFi</strong> — workaround: use <code>adb shell am start</code> to launch, then run Maestro assertions without launchApp.<br>
+  2. <strong>Screen resolution:</strong> Miko 3 = 1280×720 · Test device = 2400×1080 — all coordinate-based swipes need recalibration for Miko 3.<br>
+  3. <strong>Category card labels on screen:</strong> Miko 3 shows "Domestic" / "Birds" / "Wildlife" visually but accessibilityText = "Domestic Animals" / "Birds &amp; Insects" / "Wild Animals" (same as test device — scripts work as-is).<br>
+  4. <strong>Back confirmation dialog:</strong> Miko 3 shows "Go back? You'll lose your progress!" with Yes/No buttons — but buttons have <em>no accessibilityText</em> (same bug as test device). Tap by coordinate: Yes=(420,507), No=(859,507).
+</div>
+
+<div class="changes-section">
+  <h2>Key Findings</h2>
+  <div class="change-grid">
+
+    <div class="change-card red">
+      <span class="tag bug">Bug · PRD Gap</span>
+      <div class="title">No Play button on Splash screen</div>
+      <div class="desc">PRD §4 Screen 1 specifies a Play button on the splash screen. The Miko 3 build auto-advances through the splash directly to Category Selection — no Play button is shown at any point. TC-01-03 FAIL.</div>
+    </div>
+
+    <div class="change-card blue">
+      <span class="tag info">Device Info</span>
+      <div class="title">WiFi launch workaround needed</div>
+      <div class="desc">Maestro's <code>launchApp</code> command times out on Miko 3 over WiFi ADB. Workaround confirmed: <code>adb shell am start -n com.miko.shapetolife/.MainActivity</code> launches reliably. All assertion flows work normally once app is running.</div>
+    </div>
+
+    <div class="change-card blue">
+      <span class="tag info">Confirmed Same</span>
+      <div class="title">Core navigation and game screen intact</div>
+      <div class="desc">Category Selection, Animal Selection, and Game Screen all load correctly on Miko 3. Shape palette and counter (0/5 for Cat) match expected values. Back confirmation dialog present and functional.</div>
+    </div>
+
+    <div class="change-card">
+      <span class="tag warn">Coordinates Changed</span>
+      <div class="title">Back button position differs from test device</div>
+      <div class="desc">On Miko 3, in-app Back button is at [17,17][116,116] center=(66,66). Test device Back was at (80,80). All scripts using point-based back taps need the value updated to "66, 66" for Miko 3 runs.</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="results-section">
+  <h2>Test Results</h2>
+
+  <div class="area-block">
+    <div class="area-title">Splash &amp; Launch</div>
+    <table>
+      <thead>
+        <tr><th>TC ID</th><th>Title</th><th>Priority</th><th>Result</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TC-01-01</td>
+          <td>App launches successfully</td>
+          <td>P0</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td>Category Selection loaded. All 3 category cards visible. Domestic unlocked, Birds and Wildlife locked with padlocks confirmed via assertWithAI.</td>
+        </tr>
+        <tr>
+          <td>TC-01-03</td>
+          <td>Play button visible on splash</td>
+          <td>P1</td>
+          <td><span class="badge fail">FAIL</span></td>
+          <td>No Play button found on splash screen. App auto-advances directly to Category Selection. PRD §4 Screen 1 requires a "Play" button — not implemented in this build.
+            <div class="note bug">🐛 Bug: Splash Play button missing — PRD §4 Screen 1 not implemented on Miko 3 build.</div>
+          </td>
+        </tr>
+        <tr>
+          <td>TC-01-05</td>
+          <td>Splash auto-advances to Category Selection</td>
+          <td>P1</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td>App launched fresh via ADB. Splash animation completed within 6s. Category Selection rendered with all 3 cards. assertWithAI confirmed correct screen state.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="area-block">
+    <div class="area-title">Category Selection</div>
+    <table>
+      <thead>
+        <tr><th>TC ID</th><th>Title</th><th>Priority</th><th>Result</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TC-02-01</td>
+          <td>Category selection screen renders correctly</td>
+          <td>P0</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td>All 3 category cards visible. Exit button present (top-left). Title "Let's Start the Shape journey" confirmed via assertWithAI.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="area-block">
+    <div class="area-title">Game Screen</div>
+    <table>
+      <thead>
+        <tr><th>TC ID</th><th>Title</th><th>Priority</th><th>Result</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TC-04-01</td>
+          <td>Game Screen loads for Cat</td>
+          <td>P0</td>
+          <td><span class="badge pass">PASS</span></td>
+          <td>Tapped Domestic → Cat. Game Screen loaded with counter 0/5. Shape bank populated: triangle, circle, oval tiles all present. Navigation confirmed working on Miko 3.
+            <div class="note warn">⚠️ Back button coordinate on Miko 3: (66,66) — differs from test device (80,80). Scripts using point-based back taps need updating.</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  Generated by Claude Code &nbsp;·&nbsp; Developed by Swati Shinde &nbsp;·&nbsp; ShapeToLife Automation Suite
+</footer>
+
+</body>
+</html>
